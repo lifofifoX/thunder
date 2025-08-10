@@ -1,14 +1,14 @@
 import { c, print_box, sleep, fetch_confirmations, append_transfer_log, create_readline, ask } from "./utils.js"
-import { get_wallet } from "./wallet.js"
+import { get_wallet, get_wallet_data } from "./wallet.js"
 
 const wallet = await get_wallet()
-
+const walletData = await get_wallet_data()
 const rl = create_readline()
 
 print_box(
   "DEPOSIT TO SPARK",
   [
-    ` ${wallet.depositAddress || "-"} `
+    ` ${walletData.depositAddress || "-"} `
   ],
   c.green
 )
