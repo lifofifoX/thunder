@@ -152,5 +152,3 @@ export const ask = async (rl, prompt) => {
     throw err
   }
 }
-
-
