@@ -1,0 +1,19 @@
+{
+  "name": "thunder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "create": "node scripts/create.js",
+    "info": "node scripts/info.js",
+    "deposit": "node scripts/deposit.js"
+  },
+  "dependencies": {
+    "@buildonspark/spark-sdk": "^0.2.7",
+    "bip32": "^5.0.0-rc.0",
+    "bip39": "^3.1.0",
+    "bitcoinjs-lib": "^6.1.7",
+    "tiny-secp256k1": "^2.2.4"
+  }
+}
