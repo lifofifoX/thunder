@@ -22,6 +22,16 @@ yarn run info
 yarn run deposit
 ```
 
+### Balance
+```bash
+yarn run balance
+```
+
+### Send
+```bash
+yarn run send
+```
+
 ### Notes
 - A `wallet.json` file is created. Delete it to reset.
 - STORE THE SEED SAFELY AND NEVER SHARE IT.
