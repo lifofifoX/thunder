@@ -15,18 +15,24 @@ export const c = {
 }
 
 export const print_box = (title, lines, color) => {
+  const headerLines = Array.isArray(title) ? title : [title]
   const pad = 2
-  const width = Math.max(title.length, ...lines.map(s => s.length)) + pad * 2
+  const width = Math.max(
+    ...headerLines.map(s => s.length),
+    ...(lines && lines.length ? lines.map(s => s.length) : [0])
+  ) + pad * 2
   const top = "═".repeat(width)
   const sep = "─".repeat(width)
-  const centerPad = Math.floor((width - title.length) / 2)
-  const centeredTitle = " ".repeat(centerPad) + title + " ".repeat(width - centerPad - title.length)
 
   console.log(`${color}╔${top}╗${c.reset}`)
-  console.log(`${color}║${c.reset}${c.bold}${centeredTitle}${c.reset}${color}║${c.reset}`)
+  for (const h of headerLines) {
+    const centerPad = Math.floor((width - h.length) / 2)
+    const centered = " ".repeat(centerPad) + h + " ".repeat(width - centerPad - h.length)
+    console.log(`${color}║${c.reset}${c.bold}${centered}${c.reset}${color}║${c.reset}`)
+  }
   console.log(`${color}╟${sep}╢${c.reset}`)
 
-  for (const line of lines) {
+  for (const line of (lines || [])) {
     const padded = line + " ".repeat(width - line.length)
     console.log(`${color}║${c.reset}${padded}${color}║${c.reset}`)
   }
@@ -150,5 +156,36 @@ export const ask = async (rl, prompt) => {
       process.exit(0)
     }
     throw err
+  }
+}
+
+export const short_id = id => {
+  if (!id || id.length <= 12) return id
+  return id.slice(0, 8) + "…" + id.slice(-6)
+}
+
+export const format_bigint = value => {
+  try {
+    const s = typeof value === "bigint" ? value.toString() : String(value)
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  } catch {
+    return String(value)
+  }
+}
+
+export const format_token_amount = (amount, decimals) => {
+  try {
+    const amt = typeof amount === "bigint" ? amount : BigInt(amount)
+    const d = Number(decimals ?? 0)
+    if (!Number.isFinite(d) || d <= 0) return format_bigint(amt)
+    const base = BigInt(10) ** BigInt(d)
+    const integer = amt / base
+    const fraction = amt % base
+    const intStr = format_bigint(integer)
+    const fracStrRaw = fraction.toString().padStart(d, "0")
+    const fracStr = fracStrRaw.replace(/0+$/, "")
+    return fracStr ? `${intStr}.${fracStr}` : intStr
+  } catch {
+    return String(amount)
   }
 }
