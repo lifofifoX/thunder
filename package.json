@@ -7,7 +7,9 @@
   "scripts": {
     "create": "node scripts/create.js",
     "info": "node scripts/info.js",
-    "deposit": "node scripts/deposit.js"
+    "deposit": "node scripts/deposit.js",
+    "balance": "node scripts/balance.js",
+    "send": "node scripts/send.js"
   },
   "dependencies": {
     "@buildonspark/spark-sdk": "^0.2.7",

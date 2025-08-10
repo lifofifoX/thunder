@@ -1,19 +1,14 @@
-import readline from "readline/promises"
-import { SparkWallet } from "@buildonspark/spark-sdk"
-import { c, read_wallet, print_box, sleep, fetch_confirmations } from "./utils.js"
+import { c, print_box, sleep, fetch_confirmations, append_transfer_log, create_readline, ask } from "./utils.js"
+import { get_wallet } from "./wallet.js"
 
-const walletData = await read_wallet()
-if (!walletData) {
-  print_box("NO WALLET FOUND", ["RUN: yarn run create"], c.yellow)
-  process.exit(1)
-}
+const wallet = await get_wallet()
 
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+const rl = create_readline()
 
 print_box(
   "DEPOSIT TO SPARK",
   [
-    ` ${walletData.depositAddress || "-"} `
+    ` ${wallet.depositAddress || "-"} `
   ],
   c.green
 )
@@ -26,7 +21,7 @@ print_box(
   c.yellow
 )
 
-const txId = (await rl.question("TXID: ")).trim()
+const txId = await ask(rl, "TXID: ")
 
 if (!txId || txId.length < 32) {
   rl.close()
@@ -62,11 +57,6 @@ if (spinner) clearInterval(spinner)
 if (process.stdout.isTTY) process.stdout.write("\x1B[2K\r✔ " + confirmations + " CONFIRMATIONS\n\x1B[?25h")
 else console.log(`✔ ${confirmations} CONFIRMATIONS`)
 
-const { wallet } = await SparkWallet.initialize({
-  mnemonicOrSeed: walletData.seed,
-  options: { network: "MAINNET" }
-})
-
 const quote = await wallet.getClaimStaticDepositQuote(txId)
 
 print_box(
@@ -89,14 +79,15 @@ if (action === "" || action === "claim") {
   const transferId = result && result.transferId ? result.transferId : String(result)
   const link = `https://www.sparkscan.io/tx/${transferId}?network=mainnet`
   
+  await append_transfer_log({ kind: "claim", txId, quote, result, transferId })
   print_box("CLAIM SUCCESS", [`TRANSFER ID: ${transferId}`, ``, `${link}`], c.green)
   rl.close()
   process.exit(0)
 }
 
 if (action === "refund") {
-  const dest = (await rl.question("REFUND DESTINATION ADDRESS: ")).trim()
-  const feeStr = (await rl.question("REFUND FEE (>=300 sats): ")).trim()
+  const dest = await ask(rl, "REFUND DESTINATION ADDRESS: ")
+  const feeStr = await ask(rl, "REFUND FEE (>=300 SATS): ")
   const fee = parseInt(feeStr, 10)
   if (!Number.isFinite(fee) || fee < 300) {
     rl.close()
@@ -104,6 +95,7 @@ if (action === "refund") {
     process.exit(1)
   }
   const refundTxHex = await wallet.refundStaticDeposit(txId, dest, fee)
+  await append_transfer_log({ kind: "refund", txId, destinationAddress: dest, feeSats: fee, refundTxHex })
   print_box("REFUND TX HEX", [refundTxHex], c.yellow)
   rl.close()
   process.exit(0)

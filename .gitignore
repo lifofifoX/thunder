@@ -3,3 +3,4 @@ results.json
 .env
 config.yaml 
 wallet.json
+logs/

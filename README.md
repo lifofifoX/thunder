@@ -29,4 +29,4 @@ yarn run deposit
 ### Disclaimer
 - This is experimental software. Use at your own risk.
 - Do not trust random code from the internet with real funds.
-- Verify the code yourself before use. Keep your sats safe.
+- Verify the code yourself before use. Keep your SATS safe.

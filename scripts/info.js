@@ -1,6 +1,7 @@
-import { c, read_wallet, print_box } from "./utils.js"
+import { c, print_box } from "./utils.js"
+import { get_wallet } from "./wallet.js"
 
-const wallet = await read_wallet()
+const wallet = await get_wallet()
 
 if (!wallet) {
   print_box("NO WALLET FOUND", ["RUN: yarn run create"], c.yellow)
@@ -18,5 +19,3 @@ if (wallet.sparkAddress) {
 }
 
 print_box("SPARK WALLET", lines, c.green)
-
-
