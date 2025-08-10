@@ -25,3 +25,8 @@ yarn run deposit
 ### Notes
 - A `wallet.json` file is created. Delete it to reset.
 - STORE THE SEED SAFELY AND NEVER SHARE IT.
+
+### Disclaimer
+- This is experimental software. Use at your own risk.
+- Do not trust random code from the internet with real funds.
+- Verify the code yourself before use. Keep your sats safe.
