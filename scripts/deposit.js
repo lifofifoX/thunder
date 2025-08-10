@@ -68,12 +68,11 @@ const { wallet } = await SparkWallet.initialize({
 })
 
 const quote = await wallet.getClaimStaticDepositQuote(txId)
+
 print_box(
   "DEPOSIT QUOTE",
   [
-    `CREDIT AMOUNT (sats): ${quote.creditAmountSats}`,
-    `FEE (sats): ${quote.networkFeeSats ?? "-"}`,
-    `EXPIRY: ${quote.expiryHeight ?? "-"}`
+    `CREDIT AMOUNT (SATS): ${quote.creditAmountSats}`
   ],
   c.green
 )
@@ -86,7 +85,11 @@ if (action === "" || action === "claim") {
     creditAmountSats: quote.creditAmountSats,
     sspSignature: quote.signature
   })
-  print_box("CLAIM SUCCESS", [JSON.stringify(result)], c.green)
+
+  const transferId = result && result.transferId ? result.transferId : String(result)
+  const link = `https://www.sparkscan.io/tx/${transferId}?network=mainnet`
+  
+  print_box("CLAIM SUCCESS", [`TRANSFER ID: ${transferId}`, ``, `${link}`], c.green)
   rl.close()
   process.exit(0)
 }
