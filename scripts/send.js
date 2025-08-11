@@ -48,15 +48,28 @@ if (tokenIdentifier.toLowerCase() === "sats") {
   rl.close()
   process.exit(0)
 } else {
-  let tokenAmount
+  const bal = await wallet.getBalance()
+  const entry = bal.tokenBalances.get(tokenIdentifier)
 
-  try {
-    tokenAmount = BigInt(amountInput)
-  } catch {
+  if (!entry || !entry.tokenMetadata || entry.tokenMetadata.decimals == null) {
     rl.close()
-    print_box("INVALID AMOUNT", ["ENTER A VALID INTEGER"], c.red)
+    print_box("MISSING TOKEN", ["NO BALANCE"], c.red)
     process.exit(1)
   }
+
+  const decimals = Number(entry.tokenMetadata.decimals)
+
+  let humanInt
+  try {
+    humanInt = BigInt(amountInput)
+    if (humanInt <= 0n) throw new Error("NON_POSITIVE")
+  } catch {
+    rl.close()
+    print_box("INVALID AMOUNT", ["ENTER VALID AMOUNT"], c.red)
+    process.exit(1)
+  }
+
+  const tokenAmount = humanInt * (10n ** BigInt(decimals))
 
   const transfer = await wallet.transferTokens({ tokenIdentifier, tokenAmount, receiverSparkAddress })
 
