@@ -10,6 +10,7 @@ export const get_wallet = async () => {
 
   const { wallet } = await SparkWallet.initialize({
     mnemonicOrSeed: data.seed,
+    accountNumber: data.accountNumber ?? 1, // Older JSON files don't have accountNumber
     options: { network: "MAINNET" }
   })
   return wallet

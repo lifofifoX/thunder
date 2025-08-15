@@ -14,9 +14,11 @@ if (existing) {
 }
 
 const seed = bip39.generateMnemonic()
+const accountNumber = 0
 
 const { wallet } = await SparkWallet.initialize({
   mnemonicOrSeed: seed,
+  accountNumber,
   options: {
     network: "MAINNET"
   }
@@ -25,7 +27,7 @@ const { wallet } = await SparkWallet.initialize({
 const depositAddress = await wallet.getStaticDepositAddress()
 const sparkAddress = await wallet.getSparkAddress()
 
-await write_wallet({ seed, depositAddress, sparkAddress })
+await write_wallet({ seed, depositAddress, sparkAddress, accountNumber })
 
 print_box(
   "WALLET CREATED",
